@@ -143,8 +143,8 @@ for i in range(num_qs):
 	if(hellinger[i] < hmin):
 		hmin = hellinger[i]
 		hminquestion = i + 1
-	hellout.write('Question ' + str(i+1) + ' hellinger distance between male and females: ' + str(hellinger[i]) + '\n')
-print(hellinger)
+	#hellout.write('Question ' + str(i+1) + ' hellinger distance between male and females: ' + str(hellinger[i]) + '\n')
+#print(hellinger)
 
 #mean and variance from total population taken from mini-project1
 totmean = [394.85785358919685, 436.9387900355872, 481.35394456289987, 346.88210227272725, 395.8528784648188, 362.01137980085343, 500.63985765124556, 368.4985754985755, 415.6159317211949, 
@@ -157,13 +157,35 @@ totvar = [22243.73388110721, 45632.44892237941, 39346.424829856114, 15085.540077
 stderrall = np.zeros(num_qs)
 for i in range(num_qs):
 	stderrall[i] = math.sqrt(totvar[i]) / math.sqrt(p1countm[i]+p1countf[i] + p2countm[i]+p2countf[i] + p3countm[i]+p3countf[i] + p4countm[i]+p4countf[i] + p5countm[i]+p5countf[i])
+print(stderrall)
 meanmale = np.zeros(num_qs)
 meanfemale = np.zeros(num_qs)
 varmale = np.zeros(num_qs)
 varfemale = np.zeros(num_qs)
+malez = np.zeros(num_qs)
+femalez = np.zeros(num_qs)
+mstderr = np.zeros(num_qs)
+fstderr = np.zeros(num_qs)
+stderr = np.zeros(num_qs)
+zs = np.zeros(num_qs)
+
 for i in range(num_qs):
 	meanmale[i] = p1countm[i]*p1qm[i] + p2countm[i]*p2qm[i] + p3countm[i]*p3qm[i] + p4countm[i]*p4qm[i] + p5countm[i]*p5qm[i]
 	varmale[i] = (math.pow(p1countm[i],2)*p1qm[i] + math.pow(p2countm[i],2)*p2qm[i] + math.pow(p3countm[i],2)*p3qm[i] + math.pow(p4countm[i],2)*p4qm[i] + math.pow(p5countm[i],2)*p5qm[i]) - math.pow(meanmale[i],2)
 	meanfemale[i] = p1countf[i]*p1qf[i] + p2countf[i]*p2qf[i] + p3countf[i]*p3qf[i] + p4countf[i]*p4qf[i] + p5countf[i]*p5qf[i]
-	varfemale[i] = (math.pow(p1countf[i],2)*p1qf[i] + math.pow(p2countf[i],2)*p2qf[i] + math.pow(p3countf[i],2)*p3qf[i] + math.pow(p4countf[i],2)*p4qf[i] + math.pow(p5countf[i],2)*p5qf[i]) - math.pow(meanfemale[i],2)
+	varfemale[i] = (math.pow(p1countf[i],2)*p1qf[i] + math.pow(p2countf[i],2)*p2qf[i] + math.pow(p3countf[i],2)*p3qf[i] + math.pow(p4countf[i],2)*p4qf[i] + math.pow(p5countf[i],2)*p5qf[i]) -math.pow(meanfemale[i],2)
 
+	#malez[i] = (totmean[i] - meanmale[i]) / stderrall[i]
+	#femalez[i] = (totmean[i] - meanfemale[i]) / stderrall[i]
+
+	mstderr[i] = varmale[i] / (p1countm[i] + p2countm[i] + p3countm[i] + p4countm[i] + p5countm[i])
+	fstderr[i] = varfemale[i] / (p1countf[i] + p2countf[i] + p3countf[i] + p4countf[i] + p5countf[i])	
+	stderr[i] = math.sqrt(mstderr[i]+fstderr[i])
+	zs[i] = (meanmale[i] - meanfemale[i]) / stderr[i]
+print(zs)
+print(meanmale)
+print(meanfemale)
+print(malez)
+print(femalez)
+
+	
