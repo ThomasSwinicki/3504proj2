@@ -122,3 +122,26 @@ for i in range(num_qs):
 	plt.savefig('Q' + str(i+1) +'femaledistribution.png')
 	plt.clf()
 
+#compute the Hellinger distance between male and female for each question
+#hellinger = np.zeros((num_qs, num_qs))
+#hellinger[0,0] = 1
+hellinger = np.zeros(num_qs)
+hmin = 500
+hmax = 0
+hminquestion = 0
+hmaxquestion = 0
+#hellout = open('hellinger.txt','a')
+for i in range(num_qs):
+	hellinger[i] = ( (1/math.sqrt(2)) * math.sqrt( math.pow(  math.sqrt( p1qm[i]) - math.sqrt(p1qf[i]) , 2)
+							+ math.pow(  math.sqrt( p2qm[i]) - math.sqrt(p2qf[i]) , 2)
+							+ math.pow(  math.sqrt( p3qm[i]) - math.sqrt(p3qf[i]) , 2)
+							+ math.pow(  math.sqrt( p4qm[i]) - math.sqrt(p4qf[i]) , 2)
+							+ math.pow(  math.sqrt( p5qm[i]) - math.sqrt(p5qf[i]) , 2)))
+	if(hellinger[i] > hmax):
+		hmax = hellinger[i]
+		hmaxquestion = i+1
+	if(hellinger[i] < hmin):
+		hmin = hellinger[i]
+		hminquestion = i + 1
+	hellout.write('Question ' + str(i+1) + ' hellinger distance between male and females: ' + str(hellinger[i]) + '\n')
+print(hellinger)
