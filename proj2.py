@@ -152,7 +152,3 @@ for i in range(num_qs):
 	zs[i] = (meanmale[i] - meanfemale[i]) / stderr[i]
 
 print(str(zs) + "Z scores\n")
-print(str(meanmale) + "Male means\n")
-print(str(meanfemale) + "Female means\n")
-print(str(varmale) + "Male variances\n")
-print(str(varfemale) + "Female variances\n")
