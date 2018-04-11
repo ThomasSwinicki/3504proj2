@@ -8,9 +8,6 @@ import matplotlib.pyplot as plt
 #open excel file in variable answers
 answers = pandas.read_excel('mini-project2-data-v3.xlsx')
 
-print(answers.columns)
-print(answers.columns[26])
-
 num_qs = len(answers.columns) - 1
 
 #column index 26 is gender
@@ -81,6 +78,8 @@ for i in range(num_qs):
                         p5countf[i] += 1
                         total_respf[i] += 1
 
+countsm = [p1countm, p2countm, p3countm, p4countm, p5countm]
+countsf = [p1countf, p2countf, p3countf, p4countf, p5countf]
 outm = open('maledistros.txt', 'w');
 outf = open('femaledistros.txt', 'w');
 bar_width = 0.35
@@ -94,7 +93,7 @@ for i in range(num_qs):
 	pqm = [p1qm[i],p2qm[i],p3qm[i],p4qm[i],p5qm[i]]
 	outm.write("Probabilities of male responses in Q" + str(i+1) + " : 1) "+ str(p1qm[i]) + " 2) "+  str(p2qm[i]) + " 3) "+  str(p3qm[i]) + " 4) " + str(p4qm[i]) + " 5) "+ str(p5qm[i]) + ".\n")
 	plt.bar(ind,pqm,bar_width,color='red',label='Males')
-	plt.title('Q' + str(i+1) +' distributions')# for males')
+	plt.title('Q' + str(i+1) +' distributions')
 	plt.xlabel('Response')
 	plt.ylabel('Probability')
 	
@@ -111,14 +110,12 @@ for i in range(num_qs):
 	plt.clf()
 
 #compute the Hellinger distance between male and female for each question
-#hellinger = np.zeros((num_qs, num_qs))
-#hellinger[0,0] = 1
 hellinger = np.zeros(num_qs)
 hmin = 500
 hmax = 0
 hminquestion = 0
 hmaxquestion = 0
-#hellout = open('hellinger.txt','a')
+hellout = open('hellinger.txt','w')
 for i in range(num_qs):
 	hellinger[i] = ( (1/math.sqrt(2)) * math.sqrt( math.pow(  math.sqrt( p1qm[i]) - math.sqrt(p1qf[i]) , 2)
 							+ math.pow(  math.sqrt( p2qm[i]) - math.sqrt(p2qf[i]) , 2)
@@ -131,9 +128,9 @@ for i in range(num_qs):
 	if(hellinger[i] < hmin):
 		hmin = hellinger[i]
 		hminquestion = i + 1
-	#hellout.write('Question ' + str(i+1) + ' hellinger distance between male and females: ' + str(hellinger[i]) + '\n')
-#print(hellinger)
+	hellout.write('Question ' + str(i+1) + ' hellinger distance between male and females: ' + str(hellinger[i]) + '\n')
 
+#calculate mean and variance, followed by z scores
 meanmale = np.zeros(num_qs)
 meanfemale = np.zeros(num_qs)
 varmale = np.zeros(num_qs)
@@ -144,15 +141,16 @@ stderr = np.zeros(num_qs)
 zs = np.zeros(num_qs)
 
 for i in range(num_qs):
-	meanmale[i] = p1countm[i]*p1qm[i] + p2countm[i]*p2qm[i] + p3countm[i]*p3qm[i] + p4countm[i]*p4qm[i] + p5countm[i]*p5qm[i]
-	varmale[i] = (math.pow(p1countm[i],2)*p1qm[i] + math.pow(p2countm[i],2)*p2qm[i] + math.pow(p3countm[i],2)*p3qm[i] + math.pow(p4countm[i],2)*p4qm[i] + math.pow(p5countm[i],2)*p5qm[i]) - math.pow(meanmale[i],2)
-	meanfemale[i] = p1countf[i]*p1qf[i] + p2countf[i]*p2qf[i] + p3countf[i]*p3qf[i] + p4countf[i]*p4qf[i] + p5countf[i]*p5qf[i]
-	varfemale[i] = (math.pow(p1countf[i],2)*p1qf[i] + math.pow(p2countf[i],2)*p2qf[i] + math.pow(p3countf[i],2)*p3qf[i] + math.pow(p4countf[i],2)*p4qf[i] + math.pow(p5countf[i],2)*p5qf[i]) -math.pow(meanfemale[i],2)
+	meanmale[i] = 1*p1qm[i] + 2*p2qm[i] + 3*p3qm[i] + 4*p4qm[i] + 5*p5qm[i]
+	varmale[i] = (math.pow(1,2)*p1qm[i] + math.pow(2,2)*p2qm[i] + math.pow(3,2)*p3qm[i] + math.pow(4,2)*p4qm[i] + math.pow(5,2)*p5qm[i]) - math.pow(meanmale[i],2)
+	meanfemale[i] = 1*p1qf[i] + 2*p2qf[i] + 3*p3qf[i] + 4*p4qf[i] + 5*p5qf[i]
+	varfemale[i] = (math.pow(1,2)*p1qf[i] + math.pow(2,2)*p2qf[i] + math.pow(3,2)*p3qf[i] + math.pow(4,2)*p4qf[i] + math.pow(5,2)*p5qf[i]) -math.pow(meanfemale[i],2)
 
 	mstderr[i] = varmale[i] / (total_respm[i])
 	fstderr[i] = varfemale[i] / (total_respf[i]) 
 	stderr[i] = math.sqrt((mstderr[i]+fstderr[i]))
 	zs[i] = (meanmale[i] - meanfemale[i]) / stderr[i]
+
 print(str(zs) + "Z scores\n")
 print(str(meanmale) + "Male means\n")
 print(str(meanfemale) + "Female means\n")
